@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Book::factory()->count(10)->create();
+        Reader::factory()->count(10)->create();
        Borrow::factory()->count(10)->create();
 
     }
