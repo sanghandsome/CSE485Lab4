@@ -15,7 +15,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1 class="mb-4">Danh sách sách</h1>
+<h1 class="mb-4">Danh sách Sách</h1>
 <a href="{{ route('books.create') }}" class="btn btn-primary mb-3">Thêm sách mới</a>
 <table class="table">
     <thead>
@@ -44,8 +44,9 @@
                 <form action="{{ route('books.destroy', $book->id) }}" method="POST" class="d-inline" id="delete-form-{{ $book->id }}">
                     @csrf
                     @method('DELETE')
-{{--                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Xóa</button>--}}
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Xóa</button>
+                    <button class="btn btn-danger" type="button" onclick="confirmDelete({{ $book->id }}, '{{ route('books.destroy', $book->id) }}')">
+                        Xóa
+                    </button>
                 </form>
             </td>
         </tr>
@@ -55,19 +56,23 @@
     @endforeach
     </tbody>
 </table>
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa</h5>
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Xác nhận xóa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Bạn có chắc chắn muốn xóa công việc này không?
+                Bạn có chắc chắn muốn xóa không?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $book->id }})">Xóa</button>
+                <form id="delete-form" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
             </div>
         </div>
     </div>
@@ -78,13 +83,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 <script>
-    function selectID(taskId){
-        deleteID =
+    function confirmDelete(id, actionUrl) {
+        // Gán action URL vào form xóa
+        const form = document.getElementById('delete-form');
+        form.action = actionUrl;
 
-    }
-    function confirmDelete(taskId) {
-        // Nếu người dùng nhấn "Xóa", submit form để thực hiện xóa
-        document.getElementById('delete-form-' + taskId).submit();
+        // Hiển thị modal
+        const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        deleteModal.show();
     }
 </script>
 </html>

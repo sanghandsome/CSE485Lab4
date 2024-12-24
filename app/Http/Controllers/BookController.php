@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Borrow;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class BookController extends Controller
 {
@@ -79,8 +81,34 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-//        Book::destroy($id);
-//        session()->flash('success', 'Xóa thành công!');
-//        return redirect()->route('books.index');
+//        try{
+//            $borrows = Borrow::where('book_id', $id)->get();
+//            foreach ($borrows as $borrow) {
+//                if($borrow->status === 0){
+//                    $borrow->delete();
+//                    Book::destroy($id);
+//                    session()->flash('success', 'Xóa thành công!');
+//                }
+//                else if($borrow->status === 1){
+//                   break;
+//                }
+//            }
+//        }
+//        catch(QueryException $e){
+//            session()->flash('success', 'Sách vẫn đang mượn không được xóa');
+//        }
+        $borrows = Borrow::where('book_id', $id)->get();
+        foreach ($borrows as $borrow) {
+            if ($borrow->status === 0) {
+                $borrow->delete();
+                Book::destroy($id);
+                session()->flash('success', 'Xóa thành công!');
+            }
+            else if ($borrow->status === 1){
+                session()->flash('success', 'Sách vẫn đang mượn không được xóa');
+                break;
+            }
+        }
+        return redirect()->route('books.index');
     }
 }
